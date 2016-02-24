@@ -1,0 +1,25 @@
+------WebKitFormBoundary9WcOjKgayMxlcAFD
+Content-Disposition: form-data; name="u_id"
+
+4359
+------WebKitFormBoundary9WcOjKgayMxlcAFD
+Content-Disposition: form-data; name="contact_id"
+
+906819
+------WebKitFormBoundary9WcOjKgayMxlcAFD
+Content-Disposition: form-data; name="avatar_type"
+
+2
+------WebKitFormBoundary9WcOjKgayMxlcAFD
+Content-Disposition: form-data; name="avatar_photo"; filename="QQ Photo20151209173141.png"
+Content-Type: image/png
+
+
+------WebKitFormBoundary9WcOjKgayMxlcAFD--
+
+
+MultipartRequestParams params = new MultipartRequestParams();
+        params.put(Constants.U_ID, PreferencesProcess.preGetUserU_id());
+        params.put("contact_id",mCustomer.id);
+        params.put("avatar_type","2");
+        params.put("avatar_photo",file);
