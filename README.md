@@ -1,2 +1,2 @@
 # testLib
-init
+Test Lib For Android
