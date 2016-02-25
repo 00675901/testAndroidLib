@@ -1,8 +1,6 @@
 package com.fangstar.multipart;
 //package com.fangstar.broker.network.multipart;
 
-import android.util.Log;
-
 import org.apache.http.HttpEntity;
 
 import java.io.File;
@@ -12,7 +10,8 @@ import java.io.InputStream;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by root on 15-9-16.
+ * 多类型参数容器
+ * Created by G
  */
 public class MultipartRequestParams {
     protected ConcurrentHashMap<String, String> urlParams;
@@ -32,7 +31,7 @@ public class MultipartRequestParams {
     private void init() {
         urlParams = new ConcurrentHashMap<String, String>();
         fileParams = new ConcurrentHashMap<String, FileWrapper>();
-        testfileParams=new ConcurrentHashMap<String,File>();
+        testfileParams = new ConcurrentHashMap<String, File>();
     }
 
     /**
@@ -54,10 +53,11 @@ public class MultipartRequestParams {
      * @param file
      */
     public void put(String key, File file) {
-        testfileParams.put(key,file);
+        testfileParams.put(key, file);
         try {
             put(key, new FileInputStream(file), file.getName());
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -91,14 +91,15 @@ public class MultipartRequestParams {
         MultipartEntity multipartEntity = new MultipartEntity();
         // Add string params
         int curretItem = 0;
-        int lastItem = urlParams.entrySet().size() -1;
+        int lastItem = urlParams.entrySet().size() - 1;
+
         for (ConcurrentHashMap.Entry<String, String> entry : urlParams.entrySet()) {
             boolean isLast = curretItem == lastItem;
-            if(!fileParams.isEmpty()){
+            if (!fileParams.isEmpty()) {
                 isLast = false;
             }
-            multipartEntity.addPart(entry.getKey(), entry.getValue(),isLast);
-            curretItem ++;
+            multipartEntity.addPart(entry.getKey(), entry.getValue(), isLast);
+            curretItem++;
         }
 
 //        if(!fileParams.isEmpty()) {
@@ -119,14 +120,14 @@ public class MultipartRequestParams {
 //            }
 //        }
 
-        if(!testfileParams.isEmpty()) {
+        if (!testfileParams.isEmpty()) {
             // Add file params
             int currentIndex = 0;
             int lastIndex = testfileParams.entrySet().size() - 1;
             for (ConcurrentHashMap.Entry<String, File> entry : testfileParams.entrySet()) {
                 File file = entry.getValue();
                 boolean isLast = currentIndex == lastIndex;
-                multipartEntity.addPart(entry.getKey(), file,isLast);
+                multipartEntity.addPart(entry.getKey(), file, isLast);
                 currentIndex++;
             }
         }

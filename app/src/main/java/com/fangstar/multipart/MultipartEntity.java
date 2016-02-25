@@ -19,7 +19,8 @@ import java.io.OutputStream;
 import java.util.Random;
 
 /**
- * Created by root on 15-9-16.
+ * 创建表单格式数据
+ * Created by G.
  */
 public class MultipartEntity implements HttpEntity {
     private final static char[] MULTIPART_CHARS = "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
@@ -39,8 +40,8 @@ public class MultipartEntity implements HttpEntity {
         this.boundary = buf.toString();
     }
 
-    public void writeFirstBoundaryIfNeeds(){
-        if(!isSetFirst){
+    public void writeFirstBoundaryIfNeeds() {
+        if (!isSetFirst) {
             try {
                 out.write(("--" + boundary + "\r\n").getBytes());
             } catch (final IOException e) {
@@ -51,7 +52,7 @@ public class MultipartEntity implements HttpEntity {
     }
 
     public void writeLastBoundaryIfNeeds() {
-        if(isSetLast){
+        if (isSetLast) {
             return;
         }
         try {
@@ -62,14 +63,14 @@ public class MultipartEntity implements HttpEntity {
         isSetLast = true;
     }
 
-    public void addPart(final String key, final String value ,boolean isLast) {
+    public void addPart(final String key, final String value, boolean isLast) {
         writeFirstBoundaryIfNeeds();
         try {
-            out.write(("Content-Disposition: form-data; name=\"" +key+"\"\r\n\r\n").getBytes());
+            out.write(("Content-Disposition: form-data; name=\"" + key + "\"\r\n\r\n").getBytes());
             out.write(value.getBytes());
-            if(!isLast) {
+            if (!isLast) {
                 out.write(("\r\n--" + boundary + "\r\n").getBytes());
-            }else{
+            } else {
                 writeLastBoundaryIfNeeds();
             }
         } catch (final IOException e) {
@@ -77,24 +78,35 @@ public class MultipartEntity implements HttpEntity {
         }
     }
 
-    public void addPart(final String key, final String fileName, final InputStream fin, final boolean isLast){
-        addPart(key, fileName, fin, "application/octet-stream", isLast);
+    public void addPart(final String key, final File value, final boolean isLast) {
+        try {
+            Log.e("MultipartEntity", String.format("%s,%s,%d", value.getName(), value.getPath(), value.length()));
+            addPart(key, value.getName(), new FileInputStream(value), isLast);
+        } catch (final FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void addPart(final String key, final String fileName, final InputStream fin, String type, final boolean isLast){
+    public void addPart(final String key, final String fileName, final InputStream fin, final boolean isLast) {
+        addPart(key, fileName, fin, "image/jpeg", isLast);
+//        addPart(key, fileName, fin, "application/octet-stream", isLast);
+    }
+
+    public void addPart(final String key, final String fileName, final InputStream fin, String type, final boolean isLast) {
         writeFirstBoundaryIfNeeds();
         try {
-            type = "Content-Type: "+type+"\r\n";
-            out.write(("Content-Disposition: form-data; name=\""+ key+"\"; filename=\"" + fileName + "\"\r\n").getBytes());
+            type = "Content-Type: " + type + "\r\n";
+            out.write(("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + fileName + "\"\r\n").getBytes());
             out.write(type.getBytes());
-            out.write("Content-Transfer-Encoding: binary\r\n\r\n".getBytes());
+            out.write("\r\n".getBytes());
+//            out.write("Content-Transfer-Encoding: binary\r\n\r\n".getBytes());
 
             final byte[] tmp = new byte[4096];
             int l = 0;
             while ((l = fin.read(tmp)) != -1) {
                 out.write(tmp, 0, l);
             }
-            if(!isLast)
+            if (!isLast)
                 out.write(("\r\n--" + boundary + "\r\n").getBytes());
             else {
                 writeLastBoundaryIfNeeds();
@@ -108,15 +120,6 @@ public class MultipartEntity implements HttpEntity {
             } catch (final IOException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    public void addPart(final String key, final File value, final boolean isLast) {
-        try {
-            Log.e("MultipartEntity",String.format("%s,%s,%d",value.getName(),value.getPath(),value.length()));
-            addPart(key, value.getName(), new FileInputStream(value), isLast);
-        } catch (final FileNotFoundException e) {
-            e.printStackTrace();
         }
     }
 

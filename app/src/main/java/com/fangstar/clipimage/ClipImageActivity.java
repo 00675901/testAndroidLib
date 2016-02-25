@@ -28,11 +28,7 @@ import android.view.View.OnClickListener;
 
 /**
  * 裁剪图片的Activity
- *
- * @author
- * @ClassName: CropImageActivity
- * @Description
- * @date
+ * Created by G
  */
 public class ClipImageActivity extends Activity implements OnClickListener {
     public static final int ACTION_ALBUM = 1;
@@ -122,10 +118,10 @@ public class ClipImageActivity extends Activity implements OnClickListener {
         Bitmap bitmap = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
-        String imagePath=null;
+        String imagePath = null;
         switch (requestCode) {
             case ACTION_ALBUM:
-                Uri datauri=data.getData();
+                Uri datauri = data.getData();
                 try {
                     BitmapFactory.decodeStream(this.getContentResolver().openInputStream(datauri), null, options);
                     // 使用获取到的inSampleSize值再次解析图片
@@ -136,25 +132,25 @@ public class ClipImageActivity extends Activity implements OnClickListener {
                     Log.e("Exception", e.getMessage(), e);
                     finish();
                 }
-                imagePath=getFilePathByUri(datauri);
+                imagePath = getFilePathByUri(datauri);
                 break;
             case ACTION_CAPTURE:
                 BitmapFactory.decodeFile(PHOTO_PATH, options);
                 options.inSampleSize = calculateInSampleSize(options);
                 options.inJustDecodeBounds = false;
                 bitmap = BitmapFactory.decodeFile(PHOTO_PATH, options);
-                imagePath=PHOTO_PATH;
+                imagePath = PHOTO_PATH;
                 break;
         }
         if (bitmap != null) {
-            if (imagePath!=null){
+            if (imagePath != null) {
                 int degrees = readBitmapDegree(imagePath);
                 if (degrees == 0) {
                     mClipImageLayout.setImageBitmap(bitmap);
                 } else {
                     mClipImageLayout.setImageBitmap(rotateBitmap(degrees, bitmap));
                 }
-            }else{
+            } else {
                 mClipImageLayout.setImageBitmap(bitmap);
             }
         } else {
@@ -252,13 +248,13 @@ public class ClipImageActivity extends Activity implements OnClickListener {
             if (mUri.getScheme().equals("file")) {
                 return mUri.getPath();
             } else {
-                Cursor cursor=getContentResolver().query(mUri, null, null, null, null);
-                if(cursor!=null){
+                Cursor cursor = getContentResolver().query(mUri, null, null, null, null);
+                if (cursor != null) {
                     cursor.moveToFirst();
-                    String path=cursor.getString(1);
+                    String path = cursor.getString(1);
                     cursor.close();
                     return path;
-                }else {
+                } else {
                     return null;
                 }
             }

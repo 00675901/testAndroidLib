@@ -23,3 +23,11 @@ MultipartRequestParams params = new MultipartRequestParams();
         params.put("contact_id",mCustomer.id);
         params.put("avatar_type","2");
         params.put("avatar_photo",file);
+
+AndroidManifest&gradle&build
+volley
+Adapter
+SharedPreferences
+SQLiteDatabase
+ContentValues
+Cursor
