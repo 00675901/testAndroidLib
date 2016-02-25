@@ -32,6 +32,7 @@ public class MultipartRequestParams {
     private void init() {
         urlParams = new ConcurrentHashMap<String, String>();
         fileParams = new ConcurrentHashMap<String, FileWrapper>();
+        testfileParams=new ConcurrentHashMap<String,File>();
     }
 
     /**

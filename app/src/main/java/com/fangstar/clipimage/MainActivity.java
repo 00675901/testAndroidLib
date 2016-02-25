@@ -11,6 +11,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.base.BaseApplication;
+import com.fangstar.multipart.MultipartRequest;
+import com.fangstar.multipart.MultipartRequestParams;
+
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -46,11 +52,20 @@ public class MainActivity extends Activity implements OnClickListener {
             ImageView imageView = (ImageView) findViewById(R.id.imageView);
             imageView.setImageBitmap(bitmap);
 
-            File file = new File(ClipImageActivity.TEMP_IMAGE_PATH);
-            if (file.exists()) {
-                file.delete();
-            }
-            Log.e("ImageFile_MAIN_Size", String.valueOf(file.length()));
+            File file = new File(path);
+            Log.e("ImageFile_MAIN_Size",String.format("%s,%s,%d",file.getName(),file.getPath(),file.length()));
+//            if (file.exists()) {
+//                file.delete();
+//            }
+            MultipartRequestParams params = new MultipartRequestParams();
+//            params.put(Constants.U_ID, PreferencesProcess.preGetUserU_id());
+//            params.put("contact_id",mCustomer.id);
+//            params.put("avatar_type","2");
+            params.put("avatar_photo",file);
+
+            MultipartRequest a = new MultipartRequest(Request.Method.POST,params,"http://127.0.0.1",null,null);
+            RequestQueue que = BaseApplication.requestQueue;
+            que.add(a);
         }
     }
 }

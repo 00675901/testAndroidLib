@@ -113,6 +113,7 @@ public class MultipartEntity implements HttpEntity {
 
     public void addPart(final String key, final File value, final boolean isLast) {
         try {
+            Log.e("MultipartEntity",String.format("%s,%s,%d",value.getName(),value.getPath(),value.length()));
             addPart(key, value.getName(), new FileInputStream(value), isLast);
         } catch (final FileNotFoundException e) {
             e.printStackTrace();

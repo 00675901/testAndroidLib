@@ -11,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,12 +44,13 @@ public class MultipartRequest extends Request<String>{
             httpEntity = params.getEntity();
             try {
                 httpEntity.writeTo(baos);
+                System.out.println("bodyString is :" + new String(baos.toByteArray()));
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             String str = new String(baos.toByteArray());
-            Log.e("test", "bodyString is :" + str);
+            Log.e("MultiPartRequest", "bodyString is :" + str);
         }
         return baos.toByteArray();
     }
