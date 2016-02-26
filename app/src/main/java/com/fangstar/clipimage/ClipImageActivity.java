@@ -1,13 +1,6 @@
 package com.fangstar.clipimage;
 //package com.fangstar.broker.activities.clipimage;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -24,7 +17,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-//import com.fangstar.broker.R;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * 裁剪图片的Activity
@@ -39,6 +37,7 @@ public class ClipImageActivity extends Activity implements OnClickListener {
     private ClipImageLayout mClipImageLayout = null;
     private String PHOTO_PATH;
     private int mImageTagWidth, mImageTagHeight;
+
 
     public static void startActivity(Activity activity, int requestCode, int actionCode) {
         Intent intent = new Intent(activity, ClipImageActivity.class);
@@ -121,8 +120,9 @@ public class ClipImageActivity extends Activity implements OnClickListener {
         String imagePath = null;
         switch (requestCode) {
             case ACTION_ALBUM:
-                Uri datauri = data.getData();
+                Uri datauri = null;
                 try {
+                    datauri = data.getData();
                     BitmapFactory.decodeStream(this.getContentResolver().openInputStream(datauri), null, options);
                     // 使用获取到的inSampleSize值再次解析图片
                     options.inSampleSize = calculateInSampleSize(options);
@@ -187,7 +187,7 @@ public class ClipImageActivity extends Activity implements OnClickListener {
         }
     }
 
-    public void startCapture() {
+    private void startCapture() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         PHOTO_PATH = Environment.getExternalStorageDirectory() + "/DCIM/Camera/" + getPhotoFileName();
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(PHOTO_PATH)));
@@ -263,5 +263,4 @@ public class ClipImageActivity extends Activity implements OnClickListener {
             return null;
         }
     }
-
 }
