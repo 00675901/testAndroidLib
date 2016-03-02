@@ -69,9 +69,9 @@ public class MainActivity extends Activity implements OnClickListener {
 
             File file = new File(path);
             Log.e("ImageFile_MAIN_Size", String.format("%s,%s,%d", file.getName(), file.getPath(), file.length()));
-            if (file.exists()) {
-                file.delete();
-            }
+//            if (file.exists()) {
+//                file.delete();
+//            }
 
             MultipartRequestParams params = new MultipartRequestParams();
             params.put("u_id", "4359");

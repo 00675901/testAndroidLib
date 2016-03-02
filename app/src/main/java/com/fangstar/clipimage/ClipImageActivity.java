@@ -16,6 +16,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -120,19 +121,24 @@ public class ClipImageActivity extends Activity implements OnClickListener {
         String imagePath = null;
         switch (requestCode) {
             case ACTION_ALBUM:
-                Uri datauri = null;
                 try {
-                    datauri = data.getData();
+                    Uri datauri = data.getData();
                     BitmapFactory.decodeStream(this.getContentResolver().openInputStream(datauri), null, options);
-                    // 使用获取到的inSampleSize值再次解析图片
-                    options.inSampleSize = calculateInSampleSize(options);
-                    options.inJustDecodeBounds = false;
-                    bitmap = BitmapFactory.decodeStream(this.getContentResolver().openInputStream(datauri), null, options);
+                    String ftype = options.outMimeType;
+                    if ("image/jpeg".equals(ftype) || "image/png".equals(ftype)) {
+                        Log.e("ImageTypeTest", options.outMimeType);
+                        // 使用获取到的inSampleSize值再次解析图片
+                        options.inSampleSize = calculateInSampleSize(options);
+                        options.inJustDecodeBounds = false;
+                        bitmap = BitmapFactory.decodeStream(this.getContentResolver().openInputStream(datauri), null, options);
+                        imagePath = getFilePathByUri(datauri);
+                    }else{
+                        Toast.makeText(this, "格式错误，请使用jpg/png格式的图片", Toast.LENGTH_SHORT).show();
+                    }
                 } catch (Exception e) {
                     Log.e("Exception", e.getMessage(), e);
                     finish();
                 }
-                imagePath = getFilePathByUri(datauri);
                 break;
             case ACTION_CAPTURE:
                 BitmapFactory.decodeFile(PHOTO_PATH, options);
@@ -232,11 +238,13 @@ public class ClipImageActivity extends Activity implements OnClickListener {
      * 旋转图片
      */
     private Bitmap rotateBitmap(int angle, Bitmap bitmap) {
-        // 旋转图片 动作
+        //旋转图片 动作
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
-        // 创建新的图片
+        //创建新的图片
         Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, false);
+        //释放原图
+        bitmap.recycle();
         return resizedBitmap;
     }
 
