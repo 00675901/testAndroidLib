@@ -8,4 +8,6 @@
     <color name="version_color_two">#666666</color>
     <color name="version_color_six_white">#ffffff</color>
     <color name="version_color_seven">#dbdbdb</color>
+
+    <color name="half_transparent">#60000000</color>
 </resources>
