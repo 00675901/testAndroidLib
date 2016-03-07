@@ -34,11 +34,10 @@ public class ClipImageActivity extends Activity implements OnClickListener {
     public static final int ACTION_CAPTURE = 2;
     public static final String TEMP_IMAGE_PATH = "tempImagePath";
     private static final String KEY = "actionCode";
-    private final String TEMP_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/tempimage.jpg";
+    private String TEMP_PATH;
     private ClipImageLayout mClipImageLayout = null;
     private String PHOTO_PATH;
     private int mImageTagWidth, mImageTagHeight;
-
 
     public static void startActivity(Activity activity, int requestCode, int actionCode) {
         Intent intent = new Intent(activity, ClipImageActivity.class);
@@ -51,7 +50,12 @@ public class ClipImageActivity extends Activity implements OnClickListener {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clipimage);
-
+        File cacheDir = this.getExternalCacheDir();
+        if (cacheDir != null) {
+            TEMP_PATH = cacheDir.getPath() + "/temp_custom_avatar.jpg";
+        } else {
+            TEMP_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/temp_custom_avatar.jpg";
+        }
         mImageTagWidth = 4096;
         mImageTagHeight = 4096;
         mClipImageLayout = (ClipImageLayout) findViewById(R.id.clipImageLayout);
@@ -132,7 +136,7 @@ public class ClipImageActivity extends Activity implements OnClickListener {
                         options.inJustDecodeBounds = false;
                         bitmap = BitmapFactory.decodeStream(this.getContentResolver().openInputStream(datauri), null, options);
                         imagePath = getFilePathByUri(datauri);
-                    }else{
+                    } else {
                         Toast.makeText(this, "格式错误，请使用jpg/png格式的图片", Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
