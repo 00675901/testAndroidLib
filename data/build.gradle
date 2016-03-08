@@ -1,0 +1,86 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "com.coin"
+        minSdkVersion 10
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+//        ndk {
+//            moduleName "libcocos2dcpp"
+//            abiFilters "armeabi", "armeabi-v7a", "x86"
+//        }
+    }
+
+    sourceSets.main {
+        java.srcDirs = ["src", "jni", "../../Classes"]
+//        java.srcDirs = ["src"]
+        res.srcDir "res"
+        jni.srcDirs = []
+//        jni.srcDirs = ["jni", "../../Classes", "../../cocos2d", "../../cocos2d/external", "../../cocos2d/cocos"]
+        jniLibs.srcDir "libs"
+        manifest.srcFile "AndroidManifest.xml"
+        assets.srcDir "assets"
+    }
+
+    signingConfigs {
+
+        release {
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+}
+
+task buildNative(type: Exec, description: 'Compile JNI source via NDK') {
+    commandLine getNdkBuildCmd()
+}
+
+tasks.withType(JavaCompile) {
+    compileTask -> compileTask.dependsOn buildNative
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':libcocos2dx')
+}
+
+def getNdkDir() {
+    if (System.env.ANDROID_NDK_ROOT != null)
+        return System.env.ANDROID_NDK_ROOT
+
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    def ndkdir = properties.getProperty('ndk.dir', null)
+    if (ndkdir == null)
+        throw new GradleException("NDK location not found. Define location with ndk.dir in the local.properties file or with an ANDROID_NDK_ROOT environment variable.")
+
+    return ndkdir
+}
+
+def getNdkBuildCmd() {
+    def ndkbuild = getNdkDir() + "/ndk-build"
+    if (Os.isFamily(Os.FAMILY_WINDOWS))
+        ndkbuild += ".cmd"
+    return ndkbuild
+}
